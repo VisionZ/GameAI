@@ -1,5 +1,8 @@
 package common;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 /**
  * A class that represents any game board.
  * @author Jed Wang
@@ -15,11 +18,14 @@ public abstract class Board {
      */
     protected boolean playerIsWhite;
     
+    private HashMap<String, LinkedList<String>> allLegalMoves;
+    
     /**
      * A private instantiator for basic stuff.
      */
     private Board() {
         playerIsWhite = true;
+        allLegalMoves = new HashMap<>();
     }
     
     /**
@@ -36,13 +42,21 @@ public abstract class Board {
     /**
      * Instantiates a Board from an existing Board
      * @param b the Board to copy
+     * @deprecated can use deepCopy instead
      */
+    @Deprecated
     public Board(Board b) {
         this(b.board.length, b.board[0].length);
         for(int i = 0; i < b.board.length; i++) {
             System.arraycopy(b.board[i], 0, board[i], 0, b.board[i].length);
         }
     }
+    
+    /**
+     * Creates a deep copy of the current instance of Board
+     * @return a deep copy of this
+     */
+    public abstract Board deepCopy();
     
     /**
      * Places all needed pieces onto the starting position.
@@ -296,4 +310,103 @@ public abstract class Board {
         board[toWhereX][toWhereY] = board[fromWhereX][fromWhereY];
         board[fromWhereX][fromWhereY] = null;
     }
+    
+    /**
+     * Moves a piece according to a move denoted by the number<br>
+     * Searches through allLegalMoves to find it
+     * @param whichMove which move
+     */
+    public void movePiece(int whichMove) {
+        recalculateMoves();
+        if(whichMove < 0 || whichMove >= numOfLegalMoves()) 
+            throw new IndexOutOfBoundsException(whichMove + "");
+        int copy = whichMove;
+        String from = null, to = null;
+        for(String key : allLegalMoves.keySet()) {
+            if(copy < allLegalMoves.get(key).size()) {
+                from = key;
+                to = allLegalMoves.get(key).get(copy);
+                break;
+            } else {
+                copy -= allLegalMoves.get(key).size();
+            }
+        }
+        if(from == null || to == null) 
+            assert false : "Impossible!";
+        String side = (playerIsWhite)?"White":"Black";
+        System.out.println(side + " moved. \tMove #" + whichMove + " \tFrom: " + from + " \tTo: " + to);
+        movePiece(from, to);
+    }
+    
+    /**
+     * Recalculates all of the moves on a square
+     */
+    public void recalculateMoves() {
+        allLegalMoves = new HashMap<>();
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                if(board[i][j] == null) continue;
+                if(board[i][j].isWhite == playerIsWhite) {
+                    String current = Board.toSquare(i, j);
+                    LinkedList<String> moves = board[i][j].legalMoves(this, current);
+                    allLegalMoves.put(current, moves);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Determines how many legal moves there are
+     * @return how many legal moves there are
+     */
+    public int numOfLegalMoves() {
+        int output = 0;
+        for(LinkedList<String> value : allLegalMoves.values()) {
+            output += value.size();
+        }
+        return output;
+    }
+    
+    /**
+     * Prints the current state of the game.
+     */
+    public void printBoard() {
+        for(int i = 0;i<board[0].length;i++) {
+            for(int j = 0;j<board.length;j++) {
+                AbstractPiece ap = board[j][i];
+                if(ap == null) {
+                    System.out.print(" ");
+                } else System.out.print(ap.getCharRepresentation());
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * Returns the current player
+     * @return the current player
+     */
+    public boolean currentPlayer() {
+        return playerIsWhite;
+    }
+
+    /**
+     * Sets this current player
+     * @param playerIsWhite whether the player would be white
+     */
+    public void setCurrentPlayer(boolean playerIsWhite) {
+        this.playerIsWhite = playerIsWhite;
+    }
+    
+    /**
+     * Determines whether this game is isFinished
+     * @return whether the game is isFinished
+     */
+    public abstract boolean isFinished();
+    
+    /**
+     * Determines the result of the game, if finished.
+     * @return 1 if white won, 0 if draw, -1 if black won. If not finished, returns 0.
+     */
+    public abstract int getResult();
 }
