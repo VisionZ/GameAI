@@ -8,7 +8,7 @@ import java.util.Random;
  * A MCTS tree.
  * @author Simon Lucas
  * Tweaked by Jed Wang
- * @created 2010
+ * @since 2010
  */
 public class TreeNode {
     /**
@@ -68,7 +68,7 @@ public class TreeNode {
             visited.add(cur);
         }
         System.out.println("EXPANDING");
-        cur.expand();
+        cur.expand(); // problems
         System.out.println("SELECTING");
         TreeNode newNode = cur.select();
         newNode.b.setCurrentPlayer(!cur.b.currentPlayer());

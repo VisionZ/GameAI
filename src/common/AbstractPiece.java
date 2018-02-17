@@ -10,7 +10,7 @@ public abstract class AbstractPiece {
     /**
      * Whether or not the piece is white
      */
-    protected final boolean isWhite;
+    public final boolean isWhite;
     
     /**
      * Creates a new AbstractPiece
@@ -41,11 +41,11 @@ public abstract class AbstractPiece {
     
     /**
       * Determines whether a move is legal <br>
-      * However, this method does not check for checks
-      * @param b
-      * @param fromWhere
-      * @param toWhere
-      * @return 
+      * However, this method does not check for legality
+      * @param b the current state of the game
+      * @param fromWhere the current place of the piece
+      * @param toWhere to where the piece would be moved
+      * @return whether the move is legal, not legal
       */
     public boolean isAllLegalMove(Board b, String fromWhere, String toWhere) {
         return allLegalMoves(b, fromWhere).contains(toWhere);

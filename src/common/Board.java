@@ -14,10 +14,18 @@ public abstract class Board {
     protected AbstractPiece[][] board;
     
     /**
+     * How many rows and columns this board has
+     */
+    protected int rows, columns;
+    
+    /**
      * Whether the current player is white
      */
     protected boolean playerIsWhite;
     
+    /**
+     * A Map of all of the legal moves possible
+     */
     private HashMap<String, LinkedList<String>> allLegalMoves;
     
     /**
@@ -35,7 +43,7 @@ public abstract class Board {
      */
     public Board(int rows, int columns) {
         this();
-        board = new AbstractPiece[rows][columns];
+        board = new AbstractPiece[columns][rows];
         boardSetup();
     }
     
@@ -46,8 +54,8 @@ public abstract class Board {
      */
     @Deprecated
     public Board(Board b) {
-        this(b.board.length, b.board[0].length);
-        for(int i = 0; i < b.board.length; i++) {
+        this(b.rows, b.columns);
+        for(int i = 0; i < b.rows; i++) {
             System.arraycopy(b.board[i], 0, board[i], 0, b.board[i].length);
         }
     }
@@ -135,9 +143,10 @@ public abstract class Board {
      * Determines which column a square is referring to<br>
      * <br>
      * The columns are ordered as such:<br>
-     * |_|_|_|_|_|_|_|_|<br>
-     * |0 1 2 3 4 5 6 7<br>
-     * |a b c d e f g h
+     * <code>|_|_|_|_|...|_|<br>
+     * |0 1 2 3 ... n<br>
+     * |a b c d ...(char)(a+n)</code><br>
+     * Where n represents the number of columns in the board.
      * @param s a square
      * @return which column the String is referring to
      */
@@ -151,27 +160,27 @@ public abstract class Board {
      * Determines which row a square is referring to<br>
      * <br>
      * The rows are ordered as such:<br>
-     * ____<br>
-     * 0 |_<br>
-     * 1 |_ <br>
-     * 2 |_<br>
-     * 3 |_<br>
-     * 4 |_<br>
-     * 5 |_<br>
-     * 6 |_<br>
-     * 7 |_<br>
-     * ___W
+     * <code>_____<br>
+     * 0  |_<br>
+     * 1  |_ <br>
+     * 2  |_<br>
+     * .   .<br>
+     * .   .<br>
+     * .   .<br>
+     * m  |_<br></code>
+     * ___P1<br>
+     * Where m is the number of rows in the board and PI is the first player.
      * @param s the square
      * @return the column / file
      */
     public static int getRow(String s) {
         if(isValidSquare(s)) {
-            return 8 - Integer.parseInt(s.charAt(1) + "");
+            return 8 - Integer.parseInt(s.substring(1));
         } else throw new IllegalArgumentException("Invalid square");
     }
     
     /**
-     * Determines where a square is after a shift (a.k.a. moving it left and right, up and down)
+     * Determines where a square is after a shift (a.k.a. moving it left and right, up and down).
      * @param col current column
      * @param row current row
      * @param colShift how much to shift the columns
@@ -371,8 +380,8 @@ public abstract class Board {
      * Prints the current state of the game.
      */
     public void printBoard() {
-        for(int i = 0;i<board[0].length;i++) {
-            for(int j = 0;j<board.length;j++) {
+        for(int i = 0;i<columns;i++) {
+            for(int j = 0;j<rows;j++) {
                 AbstractPiece ap = board[j][i];
                 if(ap == null) {
                     System.out.print(" ");

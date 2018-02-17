@@ -17,17 +17,81 @@ public class KingChecker extends AbstractChecker {
     }
 
     @Override
-    public LinkedList<String> allLegalMoves(Board b, String currentPosition) {
+    public LinkedList<String> allLegalMoves(CheckerBoard cb, String currentPosition) {
         if(!Board.isValidSquare(currentPosition)) throw new IllegalArgumentException("Invalid square");
-        if(!(b.getPiece(currentPosition).getCharRepresentation().equals("K"))) throw new IllegalArgumentException("This isn\'t a king!");
+        if(!(cb.getPiece(currentPosition).getCharRepresentation().equals("K"))) throw new IllegalArgumentException("This isn\'t a king!");
         LinkedList<String> output = new LinkedList<>();
-        
+        String shifted;
+        if(Board.isValidShift(currentPosition, 1, -1)) {
+            shifted = Board.shiftSquare(currentPosition, 1, -1);
+            if (cb.isEmptySquare(shifted)) {
+                output.add(shifted);
+            }
+        }
+        if(Board.isValidShift(currentPosition, -1, -1)) {
+            shifted = Board.shiftSquare(currentPosition, -1, -1);
+            if (cb.isEmptySquare(shifted)) {
+                output.add(shifted);
+            }
+        }
+        if(Board.isValidShift(currentPosition, 1, 1)) {
+            shifted = Board.shiftSquare(currentPosition, 1, 1);
+            if (cb.isEmptySquare(shifted)) {
+                output.add(shifted);
+            }
+        }
+        if(Board.isValidShift(currentPosition, -1, 1)) {
+            shifted = Board.shiftSquare(currentPosition, -1, 1);
+            if (cb.isEmptySquare(shifted)) {
+                output.add(shifted);
+            }
+        }
         return output;
     }
 
     @Override
-    public LinkedList<String> legalCaptures(Board b, String currentPosition) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LinkedList<String> legalCaptures(CheckerBoard cb, String currentPosition) {
+        if(!Board.isValidSquare(currentPosition)) throw new IllegalArgumentException("Invalid square");
+        if(!(cb.getPiece(currentPosition).getCharRepresentation().equals("K"))) throw new IllegalArgumentException("This isn\'t a checker!");
+        LinkedList<String> output = new LinkedList<>();
+        String halfShifted, fullShifted;
+        if(Board.isValidShift(currentPosition, 2, -2)) {
+            halfShifted = Board.shiftSquare(currentPosition, 1, -1);
+            fullShifted = Board.shiftSquare(currentPosition, 2, -2);
+            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                    output.add(fullShifted);
+                }
+            }
+        }
+        if(Board.isValidShift(currentPosition, -2, -2)) {
+            halfShifted = Board.shiftSquare(currentPosition, -1, -1);
+            fullShifted = Board.shiftSquare(currentPosition, -2, -2);
+            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                    output.add(fullShifted);
+                }
+            }
+        }
+        if(Board.isValidShift(currentPosition, 2, 2)) {
+            halfShifted = Board.shiftSquare(currentPosition, 1, 1);
+            fullShifted = Board.shiftSquare(currentPosition, 2, 2);
+            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                    output.add(fullShifted);
+                }
+            }
+        }
+        if(Board.isValidShift(currentPosition, -2, 2)) {
+            halfShifted = Board.shiftSquare(currentPosition, -1, 1);
+            fullShifted = Board.shiftSquare(currentPosition, -2, 2);
+            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                    output.add(fullShifted);
+                }
+            }
+        }
+        return output;
     }
 
     @Override
