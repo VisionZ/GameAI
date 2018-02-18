@@ -2,6 +2,8 @@ package checkers;
 
 import common.AbstractPiece;
 import common.Board;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * A class that represents a checker board
@@ -26,10 +28,13 @@ public class CheckerBoard extends Board {
      */
     private CheckerBoard(CheckerBoard cb) {
         super(8, 8);
+        playerIsWhite = cb.playerIsWhite;
         for(int i = 0;i<8;i++) {
             // copy from 0-8 from cb.board[i] to board[i]
             System.arraycopy(cb.board[i], 0, board[i], 0, 8);
         }
+        allLegalMoves = new HashMap<>(cb.allLegalMoves);
+        recalculateMoves();
     }
 
     @Override
@@ -44,10 +49,10 @@ public class CheckerBoard extends Board {
         board[6][1] = new StandardChecker(false);
         board[1][2] = new StandardChecker(false);
         board[3][2] = new StandardChecker(false);
-        board[5][2] = new StandardChecker(false);
+        board[6][3] = new StandardChecker(false);
         board[7][2] = new StandardChecker(false);
         
-        board[0][5] = new StandardChecker(true);
+        board[1][4] = new StandardChecker(true);
         board[2][5] = new StandardChecker(true);
         board[4][5] = new StandardChecker(true);
         board[6][5] = new StandardChecker(true);
@@ -64,7 +69,10 @@ public class CheckerBoard extends Board {
     @Override
     public void movePiece(int fromWhereX, int fromWhereY, int toWhereX, int toWhereY) {
         super.movePiece(fromWhereX, fromWhereY, toWhereX, toWhereY);
-        if(Math.abs(fromWhereX - toWhereX) == 2) movesWOCapture = 0;
+        if(Math.abs(fromWhereX - toWhereX) == 2) {
+            movesWOCapture = 0;
+            board[(fromWhereX + toWhereX)/2][(toWhereY + fromWhereY)/2] = null;
+        }
         else movesWOCapture++;
     }
 
@@ -78,6 +86,21 @@ public class CheckerBoard extends Board {
             }
             board[toWhereX][toWhereY] = toMove;
             board[fromWhereX][fromWhereY] = null;
+        }
+    }
+    
+    @Override
+    public void recalculateMoves() {
+        allLegalMoves = new HashMap<>();
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                if(board[i][j] == null) continue;
+                if(board[i][j].isWhite == playerIsWhite) {
+                    String current = Board.toSquare(i, j);
+                    LinkedList<String> moves = board[i][j].legalMoves(this, current);
+                    allLegalMoves.put(current, moves);
+                }
+            }
         }
     }
 

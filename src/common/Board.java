@@ -26,7 +26,7 @@ public abstract class Board {
     /**
      * A Map of all of the legal moves possible
      */
-    private HashMap<String, LinkedList<String>> allLegalMoves;
+    protected HashMap<String, LinkedList<String>> allLegalMoves;
     
     /**
      * A private instantiator for basic stuff.
@@ -43,8 +43,11 @@ public abstract class Board {
      */
     public Board(int rows, int columns) {
         this();
+        this.rows = rows;
+        this.columns = columns;
         board = new AbstractPiece[columns][rows];
         boardSetup();
+        recalculateMoves();
     }
     
     /**
@@ -327,8 +330,10 @@ public abstract class Board {
      */
     public void movePiece(int whichMove) {
         recalculateMoves();
-        if(whichMove < 0 || whichMove >= numOfLegalMoves()) 
-            throw new IndexOutOfBoundsException(whichMove + "");
+        if(whichMove < 0) 
+            throw new IndexOutOfBoundsException(whichMove + " under 0");
+        if(whichMove >= numOfLegalMoves())
+            throw new IndexOutOfBoundsException(whichMove + " over " + numOfLegalMoves());
         int copy = whichMove;
         String from = null, to = null;
         for(String key : allLegalMoves.keySet()) {
@@ -342,9 +347,17 @@ public abstract class Board {
         }
         if(from == null || to == null) 
             assert false : "Impossible!";
-        String side = (playerIsWhite)?"White":"Black";
-        System.out.println(side + " moved. \tMove #" + whichMove + " \tFrom: " + from + " \tTo: " + to);
         movePiece(from, to);
+    }
+    
+    /**
+     * Returns a String denoting the move in allLegalMoves
+     * @param whichMove which move
+     * @return a String denoting the move in allLegalMoves
+     */
+    public String getMove(int whichMove) {
+        String from = allLegalMoves.keySet().toArray()[whichMove].toString();
+        return from + " -> " + allLegalMoves.get(from);
     }
     
     /**
@@ -385,7 +398,11 @@ public abstract class Board {
                 AbstractPiece ap = board[j][i];
                 if(ap == null) {
                     System.out.print(" ");
-                } else System.out.print(ap.getCharRepresentation());
+                } else if(ap.isWhite) {
+                    System.out.print(ap.getCharRepresentation());
+                } else {
+                    System.out.print(ap.getCharRepresentation().toLowerCase());
+                }
             }
             System.out.println();
         }

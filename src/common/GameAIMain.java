@@ -1,8 +1,6 @@
 package common;
 
 import checkers.CheckerBoard;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * The Main class
@@ -14,12 +12,29 @@ public class GameAIMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        List<TreeNode> list = new LinkedList<>();
-        list.add(null);
-        TreeNode tn = new TreeNode(new CheckerBoard());
-        long start = System.nanoTime();
-        tn.selectAction();
-        long time = System.nanoTime() - start;
-        System.out.println(time + " nanos");
+        Board cb = new CheckerBoard();
+        TreeNode tn = new TreeNode(cb);
+        double start = System.currentTimeMillis();
+        for (int j = 0; j < 100000; j++) {
+            System.out.println(j);
+            tn.selectAction();
+        }
+        double total = System.currentTimeMillis() - start;
+        System.out.println((total/1000) + " seconds");
+        System.out.println(tn.winPercentage());
+        TreeNode best = tn.select();
+        best.getBoard().printBoard();
+        System.out.println(best.winPercentage() + "\t" + best.getVisits() + "/" + best.getWins(true));
+        cb = best.getBoard();
+        /*best = tn.bestChild();
+        best.getBoard().printBoard();
+        System.out.println(best.winPercentage() + "\t" + best.getVisits() + "/" + best.getWins(true));*/
+        /*CheckerBoard cb = new CheckerBoard();
+        while(!cb.isFinished()) {
+            cb.recalculateMoves();
+            int random = (int) (Math.random() * cb.numOfLegalMoves());
+            cb.movePiece(random);
+        }
+        System.out.println("DONE: " + cb.getResult());*/
     }
 }

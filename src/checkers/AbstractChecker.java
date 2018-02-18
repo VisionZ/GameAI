@@ -38,7 +38,6 @@ public abstract class AbstractChecker extends AbstractPiece {
 
     @Override
     public LinkedList<String> legalMoves(Board b, String currentPosition) {
-        System.out.println("LEGALMOVES");
         if(b instanceof CheckerBoard) {
             return legalMoves((CheckerBoard) b, currentPosition);
         } else throw new IllegalArgumentException("Can only use checker boards.");

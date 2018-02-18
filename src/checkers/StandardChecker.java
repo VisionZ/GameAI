@@ -22,16 +22,31 @@ public class StandardChecker extends AbstractChecker {
         if(!(cb.getPiece(currentPosition).getCharRepresentation().equals("O"))) throw new IllegalArgumentException("This isn\'t a checker!");
         LinkedList<String> output = new LinkedList<>();
         String shifted;
-        if(Board.isValidShift(currentPosition, 1, -1)) {
-            shifted = Board.shiftSquare(currentPosition, 1, -1);
-            if (cb.isEmptySquare(shifted)) {
-                output.add(shifted);
+        if(isWhite) {
+            if(Board.isValidShift(currentPosition, 1, -1)) {
+                shifted = Board.shiftSquare(currentPosition, 1, -1);
+                if (cb.isEmptySquare(shifted)) {
+                    output.add(shifted);
+                }
             }
-        }
-        if(Board.isValidShift(currentPosition, -1, -1)) {
-            shifted = Board.shiftSquare(currentPosition, -1, -1);
-            if (cb.isEmptySquare(shifted)) {
-                output.add(shifted);
+            if(Board.isValidShift(currentPosition, -1, -1)) {
+                shifted = Board.shiftSquare(currentPosition, -1, -1);
+                if (cb.isEmptySquare(shifted)) {
+                    output.add(shifted);
+                }
+            }
+        } else {
+            if(Board.isValidShift(currentPosition, 1, 1)) {
+                shifted = Board.shiftSquare(currentPosition, 1, 1);
+                if (cb.isEmptySquare(shifted)) {
+                    output.add(shifted);
+                }
+            }
+            if(Board.isValidShift(currentPosition, -1, 1)) {
+                shifted = Board.shiftSquare(currentPosition, -1, 1);
+                if (cb.isEmptySquare(shifted)) {
+                    output.add(shifted);
+                }
             }
         }
         return output;
@@ -43,21 +58,42 @@ public class StandardChecker extends AbstractChecker {
         if(!(cb.getPiece(currentPosition).getCharRepresentation().equals("O"))) throw new IllegalArgumentException("This isn\'t a checker!");
         LinkedList<String> output = new LinkedList<>();
         String halfShifted, fullShifted;
-        if(Board.isValidShift(currentPosition, 2, -2)) {
-            halfShifted = Board.shiftSquare(currentPosition, 1, -1);
-            fullShifted = Board.shiftSquare(currentPosition, 2, -2);
-            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
-                    output.add(fullShifted);
+        if(isWhite) {
+            if(Board.isValidShift(currentPosition, 2, -2)) {
+                halfShifted = Board.shiftSquare(currentPosition, 1, -1);
+                fullShifted = Board.shiftSquare(currentPosition, 2, -2);
+                if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                    if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
+                        output.add(fullShifted);
+                    }
                 }
             }
-        }
-        if(Board.isValidShift(currentPosition, -2, -2)) {
-            halfShifted = Board.shiftSquare(currentPosition, -1, -1);
-            fullShifted = Board.shiftSquare(currentPosition, -2, -2);
-            if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
-                    output.add(fullShifted);
+            if(Board.isValidShift(currentPosition, -2, -2)) {
+                halfShifted = Board.shiftSquare(currentPosition, -1, -1);
+                fullShifted = Board.shiftSquare(currentPosition, -2, -2);
+                if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                    if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
+                        output.add(fullShifted);
+                    }
+                }
+            }
+        } else {
+            if(Board.isValidShift(currentPosition, 2, 2)) {
+                halfShifted = Board.shiftSquare(currentPosition, 1, 1);
+                fullShifted = Board.shiftSquare(currentPosition, 2, 2);
+                if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                    if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
+                        output.add(fullShifted);
+                    }
+                }
+            }
+            if(Board.isValidShift(currentPosition, -2, 2)) {
+                halfShifted = Board.shiftSquare(currentPosition, -1, 1);
+                fullShifted = Board.shiftSquare(currentPosition, -2, 2);
+                if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
+                    if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
+                        output.add(fullShifted);
+                    }
                 }
             }
         }

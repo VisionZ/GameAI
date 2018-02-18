@@ -59,7 +59,7 @@ public class KingChecker extends AbstractChecker {
             halfShifted = Board.shiftSquare(currentPosition, 1, -1);
             fullShifted = Board.shiftSquare(currentPosition, 2, -2);
             if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
                     output.add(fullShifted);
                 }
             }
@@ -68,7 +68,7 @@ public class KingChecker extends AbstractChecker {
             halfShifted = Board.shiftSquare(currentPosition, -1, -1);
             fullShifted = Board.shiftSquare(currentPosition, -2, -2);
             if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
                     output.add(fullShifted);
                 }
             }
@@ -77,7 +77,7 @@ public class KingChecker extends AbstractChecker {
             halfShifted = Board.shiftSquare(currentPosition, 1, 1);
             fullShifted = Board.shiftSquare(currentPosition, 2, 2);
             if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
                     output.add(fullShifted);
                 }
             }
@@ -86,7 +86,7 @@ public class KingChecker extends AbstractChecker {
             halfShifted = Board.shiftSquare(currentPosition, -1, 1);
             fullShifted = Board.shiftSquare(currentPosition, -2, 2);
             if(cb.isEmptySquare(fullShifted) && !cb.isEmptySquare(halfShifted)) {
-                if(cb.getPiece(halfShifted).isWhite == isWhite) {
+                if(cb.getPiece(halfShifted).isWhite ^ isWhite) {
                     output.add(fullShifted);
                 }
             }

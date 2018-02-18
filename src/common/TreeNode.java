@@ -47,10 +47,21 @@ public class TreeNode {
      * This node's state of the game
      */
     private Board b;
+    
+    /**
+     * The starting player
+     */
+    private final boolean startingPlayer;
+    
+    /**
+     * The win count
+     */
+    private int whiteWinCount = 0, blackWinCount = 0;
 
-    public TreeNode(Board cb) {
-        this.b = cb;
-        nActions = cb.numOfLegalMoves();
+    public TreeNode(Board b) {
+        this.b = b;
+        nActions = b.numOfLegalMoves();
+        startingPlayer = b.currentPlayer();
     }
 
     /**
@@ -58,24 +69,25 @@ public class TreeNode {
      */
     public void selectAction() {
         nActions = b.numOfLegalMoves();
-        System.out.println("SELECTING");
+        // System.out.println("SELECTING");
         List<TreeNode> visited = new LinkedList<>();
         TreeNode cur = this;
         visited.add(this);
         while (!cur.isLeaf()) {
             cur = cur.select();
+            if(cur == null) return;
             // System.out.println("Adding: " + cur);
             visited.add(cur);
         }
-        System.out.println("EXPANDING");
-        cur.expand(); // problems
-        System.out.println("SELECTING");
+        // System.out.println("EXPANDING");
+        cur.expand();
+        // System.out.println("SELECTING");
         TreeNode newNode = cur.select();
         newNode.b.setCurrentPlayer(!cur.b.currentPlayer());
         visited.add(newNode);
-        System.out.println("SIMULATING");
+        // System.out.println("SIMULATING");
         double value = simulate(newNode);
-        System.out.println("UPDATING");
+        // System.out.println("UPDATING");
         for(TreeNode node : visited) {
             // would need extra logic for n-player game
             // System.out.println(node.toString());
@@ -87,13 +99,16 @@ public class TreeNode {
      * Creates new {@code TreeNode}s to match all playable branches of the game.
      */
     public void expand() {
+        b.recalculateMoves();
+        nActions = b.numOfLegalMoves();
+        // System.out.println("nActions: " + nActions);
         children = new TreeNode[nActions];
-        b.printBoard();
+        // b.printBoard();
         for (int i=0; i<nActions; i++) {
             Board temp = b.deepCopy();
             temp.movePiece(i);
             temp.recalculateMoves();
-            temp.printBoard();
+            // temp.printBoard();
             children[i] = new TreeNode(temp);
         }
     }
@@ -102,7 +117,7 @@ public class TreeNode {
      * Selects a {@code TreeNode} to start searching from
      * @return a {@code TreeNode}
      */
-    private TreeNode select() {
+    public TreeNode select() {
         TreeNode selected = null;
         double bestValue = Double.MIN_VALUE;
         for (TreeNode c : children) {
@@ -140,16 +155,13 @@ public class TreeNode {
         // and just return this at random
         // Use a NN to minimax through later
         Board copy = tn.b.deepCopy();
-        copy.printBoard();
+        // copy.printBoard();
         copy.setCurrentPlayer(!copy.currentPlayer());
         while(!copy.isFinished()) {
-            boolean isWhite = copy.currentPlayer();
             copy.recalculateMoves();
+            if(copy.numOfLegalMoves() == 0) return (copy.currentPlayer())?-1:1;
             int random = r.nextInt(copy.numOfLegalMoves());
             copy.movePiece(random);
-            copy.printBoard();
-            System.out.println();
-            System.out.println("Finished: " + copy.isFinished());
         }
         return copy.getResult();
     }
@@ -161,6 +173,11 @@ public class TreeNode {
     public void updateStats(double value) {
         nVisits++;
         totValue += value;
+        if(value == 1) {
+            whiteWinCount++;
+        } else if(value == -1) {
+            blackWinCount++;
+        }
     }
 
     /**
@@ -170,5 +187,61 @@ public class TreeNode {
      */
     public int arity() {
         return children == null ? 0 : children.length;
+    }
+
+    /**
+     * Returns this {@code TreeNode}'s board
+     * @return 
+     */
+    public Board getBoard() {
+        return b;
+    }
+    
+    /**
+     * Returns this {@code TreeNode}'s best child
+     * @return the best child
+     */
+    public TreeNode bestChild() {
+        if(isLeaf()) return null;
+        TreeNode best = children[0];
+        for(TreeNode child : children) {
+            if(best.winPercentage() < child.winPercentage()) {
+                best = child;
+            }
+        }
+        return best;
+    }
+    
+    /**
+     * Determines how much of the play-throughs are wins
+     * @return the win percentage
+     */
+    public double winPercentage() {
+        if(startingPlayer) {
+            return whiteWinCount / nVisits;
+        } else {
+            return blackWinCount / nVisits;
+        }
+    }
+
+    /**
+     * Determines how many times this node has been visited
+     * @return the number of times this node has been visited
+     */
+    public double getVisits() {
+        return nVisits;
+    }
+    
+    /**
+     * Determines how many wins through a search a side has
+     * @param isWhite which side
+     * @return how many wins through a search a side has
+     */
+    public int getWins(boolean isWhite) {
+        if(isWhite) {
+            return whiteWinCount;
+        } else {
+            return blackWinCount;
+        }
     }
 }
