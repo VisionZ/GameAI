@@ -15,20 +15,16 @@ public class GameAIMain {
         Board cb = new CheckerBoard();
         TreeNode tn = new TreeNode(cb);
         double start = System.currentTimeMillis();
-        for (int j = 0; j < 100000; j++) {
+        for (int j = 0; j < 10000; j++) {
             System.out.println(j);
             tn.selectAction();
         }
         double total = System.currentTimeMillis() - start;
         System.out.println((total/1000) + " seconds");
-        System.out.println(tn.winPercentage());
         TreeNode best = tn.select();
         best.getBoard().printBoard();
-        System.out.println(best.winPercentage() + "\t" + best.getVisits() + "/" + best.getWins(true));
-        cb = best.getBoard();
-        /*best = tn.bestChild();
-        best.getBoard().printBoard();
-        System.out.println(best.winPercentage() + "\t" + best.getVisits() + "/" + best.getWins(true));*/
+        /*cb = best.getBoard();
+        best = tn.bestChild();
         /*CheckerBoard cb = new CheckerBoard();
         while(!cb.isFinished()) {
             cb.recalculateMoves();

@@ -356,8 +356,18 @@ public abstract class Board {
      * @return a String denoting the move in allLegalMoves
      */
     public String getMove(int whichMove) {
-        String from = allLegalMoves.keySet().toArray()[whichMove].toString();
-        return from + " -> " + allLegalMoves.get(from);
+        int copy = whichMove;
+        String from = null, to = null;
+        for(String key : allLegalMoves.keySet()) {
+            if(copy < allLegalMoves.get(key).size()) {
+                from = key;
+                to = allLegalMoves.get(key).get(copy);
+                break;
+            } else {
+                copy -= allLegalMoves.get(key).size();
+            }
+        }
+        return from + " -> " + to;
     }
     
     /**

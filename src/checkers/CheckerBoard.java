@@ -49,10 +49,10 @@ public class CheckerBoard extends Board {
         board[6][1] = new StandardChecker(false);
         board[1][2] = new StandardChecker(false);
         board[3][2] = new StandardChecker(false);
-        board[6][3] = new StandardChecker(false);
+        board[5][2] = new StandardChecker(false);
         board[7][2] = new StandardChecker(false);
         
-        board[1][4] = new StandardChecker(true);
+        board[0][5] = new StandardChecker(true);
         board[2][5] = new StandardChecker(true);
         board[4][5] = new StandardChecker(true);
         board[6][5] = new StandardChecker(true);

@@ -200,7 +200,9 @@ public class TreeNode {
     /**
      * Returns this {@code TreeNode}'s best child
      * @return the best child
+     * @deprecated use select() instead. Not sure if win percentage is everything.
      */
+    @Deprecated
     public TreeNode bestChild() {
         if(isLeaf()) return null;
         TreeNode best = children[0];
