@@ -21,7 +21,7 @@ public class Bishop extends AbstractChessPiece {
     public LinkedList<String> allLegalMoves(ChessBoard cb, String currentPosition) {
         if(!ChessBoard.isValidSquare(currentPosition)) throw new IllegalArgumentException("Invalid square");
         if(!(cb.getPiece(currentPosition).getCharRepresentation().equals("B"))) throw new IllegalArgumentException("This isn\'t a bishop!");
-        LinkedList<String> output = new LinkedList<>();
+        List<String> output = new ArrayList<>(13); //No costly internal resizing :)
         String temp;
         if(ChessBoard.isValidShift(currentPosition, 1, 1)) {
             temp = ChessBoard.shiftSquare(currentPosition, 1, 1);
